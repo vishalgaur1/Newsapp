@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import NewsItem from './NewsItem'
+import Spinner from './Spinner';
 
 export class News extends Component {
 
@@ -9,7 +10,8 @@ export class News extends Component {
     this.state = {
       articles: [],
       loading: false,
-      page: 1
+      page: 1,
+      totalResults: 0
     }
   }
 
@@ -18,11 +20,15 @@ export class News extends Component {
   }
 
   fetchNews = async () => {
-    this.setState({ loading: true });
-    let url = `https://newsapi.org/v2/top-headlines?country=in&apiKey=ea160c6342434d448c1160830c17f304&page=${this.state.page}&pagesize=20`;
+    let url = `https://newsapi.org/v2/top-headlines?country=in&apiKey=ea160c6342434d448c1160830c17f304&page=${this.state.page}&pagesize=${this.props.pageSize}`;
+    this.setState({loading: true});
     let data = await fetch(url);
     let parsedData = await data.json();
-    this.setState({ articles: parsedData.articles, loading: false, totalResults: parsedData.totalResults });
+    this.setState({ 
+      articles: parsedData.articles, 
+      totalResults: parsedData.totalResults,
+      loading: false
+     });
   };
 
   handlePrevClick = async () => {
@@ -41,15 +47,16 @@ export class News extends Component {
 
   render() {
 
-    const { page, totalResults } = this.state;
-    const pageSize = 20; 
+    const { page, totalResults, loading, articles} = this.state;
+    const pageSize = this.props.pageSize; 
     const totalPages = Math.ceil(totalResults / pageSize);
 
     return (
       <div className='container my-3'>
-        <h2>NewsMonkey - Top Headlines</h2>
+        <h1 className="text-center">NewsMonkey - Top Headlines</h1>
+        {loading && <Spinner/>}
         <div className="row">
-          {this.state.articles.map((element) => (
+          {!loading && articles.map((element) => (
             <div className="col-md-4" key={element.url}>
               <NewsItem
                 title={element.title ? element.title.slice(0, 57) : ""}
