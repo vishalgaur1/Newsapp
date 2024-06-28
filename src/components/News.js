@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import NewsItem from './NewsItem'
 import Spinner from './Spinner';
 
+
 export class News extends Component {
 
   constructor() {
@@ -20,7 +21,7 @@ export class News extends Component {
   }
 
   fetchNews = async () => {
-    let url = `https://newsapi.org/v2/top-headlines?country=in&apiKey=ea160c6342434d448c1160830c17f304&page=${this.state.page}&pagesize=${this.props.pageSize}`;
+    let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&apiKey=ea160c6342434d448c1160830c17f304&page=${this.state.page}&pagesize=${this.props.pageSize}`;
     this.setState({loading: true});
     let data = await fetch(url);
     let parsedData = await data.json();
